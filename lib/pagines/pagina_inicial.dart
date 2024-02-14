@@ -1,29 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/BarraContacto.dart';
 import 'package:flutter_application_1/components/Botton.dart';
-import 'package:flutter_application_1/dades/database.dart';
-import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:flutter_application_1/dades/Contactos.dart'; 
 import 'package:hive/hive.dart';
 
-class PaginaInicial extends StatefulWidget {
-  @override
-  _PaginaInicialState createState() => _PaginaInicialState();
-}
-
-class _PaginaInicialState extends State<PaginaInicial> {
-  late BaseDeDadesAppContactes baseDeDatos;
-
-  @override
-  void initState() {
-    super.initState();
-    inicializarBaseDeDatos();
-  }
-
-  Future<void> inicializarBaseDeDatos() async {
-    final appDocumentDirectory = await path_provider.getApplicationDocumentsDirectory();
-    Hive.init(appDocumentDirectory.path);
-    baseDeDatos = BaseDeDadesAppContactes();
-    await baseDeDatos.abrirBox();
+class PaginaInicial extends StatelessWidget {
+  Widget otroWidget() {
+    return Container(
+    
+    );
   }
 
   @override
@@ -38,34 +23,49 @@ class _PaginaInicialState extends State<PaginaInicial> {
         centerTitle: true,
       ),
       backgroundColor: Colors.grey,
-      body: FutureBuilder<List<Map<String, dynamic>>?>(
-        future: baseDeDatos.mostrarContactos(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else {
-            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  final contacto = snapshot.data![index];
-                  return BarraContacto(
-                    nombreContacto: contacto['nombre'] ?? '',
+      body: Stack(
+        children: [
+          FutureBuilder(
+            future: Hive.openBox<Contacto>('contactos'),
+            builder: (BuildContext context, AsyncSnapshot<Box<Contacto>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
+                  Box<Contacto> box = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: box.length,
+                    itemBuilder: (context, index) {
+                      Contacto contacto = box.getAt(index)!;
+                      return Column(
+                        children: [
+                          BarraContacto(contacto: contacto), 
+                          Divider(),
+                        ],
+                      );
+                    },
                   );
-                },
-              );
-            } else {
-              return Center(child: Text("No hay contactos"));
-            }
-          }
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Implementar acción de agregar contacto
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.black,
+                } else {
+                  return Center(child: Text('No hay contactos guardados'));
+                }
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+          Positioned(
+            bottom: 20.0,
+            right: 20.0,
+            child: BotonAgregar(
+              onPressed: () {
+                print("Botón de agregar presionado");
+              },
+            ),
+          ),
+          Positioned(
+            bottom: 60.0, 
+            right: 20.0, 
+            child: otroWidget(), 
+          ),
+        ],
       ),
     );
   }
