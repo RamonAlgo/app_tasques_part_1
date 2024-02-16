@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/dades/Contactos.dart';
 import 'package:flutter_application_1/pagines/pagina_inicial.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart'; 
 
 void main() async {

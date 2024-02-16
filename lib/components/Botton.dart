@@ -11,12 +11,12 @@ class BotonAgregar extends StatelessWidget {
   final TextEditingController numTelController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
 
-  BotonAgregar(
-      {Key? key,
-      required this.onPressed,
-      this.bottom = 20.0,
-      this.right = 20.0})
-      : super(key: key);
+  BotonAgregar({
+    Key? key,
+    required this.onPressed,
+    this.bottom = 20.0,
+    this.right = 20.0,
+  }) : super(key: key);
 
   void guardarContacto(Contacto nuevoContacto) async {
     final box = await Hive.openBox<Contacto>('contactos');
@@ -33,63 +33,74 @@ class BotonAgregar extends StatelessWidget {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AlertDialog(
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextField(
-                      controller: nombreController,
-                      decoration: InputDecoration(
-                        labelText: 'Nombre',
-                      ),
+              return Theme(
+                data: Theme.of(context).copyWith(
+                    dialogBackgroundColor: Color.fromARGB(255, 172, 134, 122)),
+                child: AlertDialog(
+                  title: Text("Afegir nou contacte"),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextField(
+                          controller: nombreController,
+                          decoration: const InputDecoration(
+                              labelText: 'Nom',
+                              border: OutlineInputBorder(
+                                  )),
+                        ),
+                        SizedBox(height: 10),
+                        TextField(
+                          controller: numTelController,
+                          decoration: const InputDecoration(
+                              labelText: 'Numero de telèfon',
+                              border: OutlineInputBorder()),
+                        ),
+                        SizedBox(height: 10),
+                        TextField(
+                          controller: emailController,
+                          decoration: const InputDecoration(
+                              labelText: 'Correu',
+                              border: OutlineInputBorder()),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 10),
-                    TextField(
-                      controller: numTelController,
-                      decoration: InputDecoration(
-                        labelText: 'Número de teléfono',
-                      ),
+                  ),
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        String nombre = nombreController.text;
+                        String numTel = numTelController.text;
+                        String email = emailController.text;
+                        Contacto nuevoContacto = Contacto(
+                            nombre: nombre, numTel: numTel, email: email);
+                        guardarContacto(nuevoContacto);
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => PaginaInicial()));
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.brown),
+                      child: const Text("Guardar",
+                          style: TextStyle(color: Colors.white)),
                     ),
-                    SizedBox(height: 10),
-                    TextField(
-                      controller: emailController,
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                      ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.brown),
+                      child: const Text("Cancelar",
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
-                actions: [
-                  ElevatedButton(
-                    onPressed: () {
-                      String nombre = nombreController.text;
-                      String numTel = numTelController.text;
-                      String email = emailController.text;
-
-                      Contacto nuevoContacto = Contacto(
-                          nombre: nombre, numTel: numTel, email: email);
-
-                      guardarContacto(nuevoContacto);
-
-                      Navigator.of(context).pop(); 
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => PaginaInicial()));
-                    },
-                    child: Text("Guardar"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text("Cancelar"),
-                  ),
-                ],
               );
             },
           );
         },
-        backgroundColor: const Color.fromARGB(255, 126, 126, 126),
-        child: Icon(Icons.add, color: const Color.fromARGB(255, 0, 0, 0)),
+        backgroundColor: const Color.fromARGB(255, 58, 27, 15),
+        child: const Icon(Icons.add, color: Color.fromARGB(255, 241, 241, 241)),
       ),
     );
   }

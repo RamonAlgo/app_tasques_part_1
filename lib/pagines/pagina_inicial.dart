@@ -1,33 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/BarraContacto.dart';
 import 'package:flutter_application_1/components/Botton.dart';
-import 'package:flutter_application_1/dades/Contactos.dart'; 
+import 'package:flutter_application_1/dades/Contactos.dart';
 import 'package:hive/hive.dart';
 
 class PaginaInicial extends StatelessWidget {
-  Widget otroWidget() {
-    return Container(
-    
-    );
+  Widget altreWidget() {
+    return Container();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Color.fromARGB(255, 58, 27, 15),
         title: Text(
           "Agenda",
-          style: TextStyle(color: Colors.grey),
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
       ),
-      backgroundColor: Colors.grey,
+      backgroundColor: Color.fromARGB(255, 172, 134, 122),
       body: Stack(
         children: [
           FutureBuilder(
             future: Hive.openBox<Contacto>('contactos'),
-            builder: (BuildContext context, AsyncSnapshot<Box<Contacto>> snapshot) {
+            builder:
+                (BuildContext context, AsyncSnapshot<Box<Contacto>> snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasData) {
                   Box<Contacto> box = snapshot.data!;
@@ -37,14 +36,13 @@ class PaginaInicial extends StatelessWidget {
                       Contacto contacto = box.getAt(index)!;
                       return Column(
                         children: [
-                          BarraContacto(contacto: contacto), 
-                          Divider(),
+                          BarraContacto(contacto: contacto),
                         ],
                       );
                     },
                   );
                 } else {
-                  return Center(child: Text('No hay contactos guardados'));
+                  return const Center(child: Text('No hi han contactes guardats'));
                 }
               } else {
                 return Center(child: CircularProgressIndicator());
@@ -56,14 +54,14 @@ class PaginaInicial extends StatelessWidget {
             right: 20.0,
             child: BotonAgregar(
               onPressed: () {
-                print("Botón de agregar presionado");
+                print("BotoAf");
               },
             ),
           ),
           Positioned(
-            bottom: 60.0, 
-            right: 20.0, 
-            child: otroWidget(), 
+            bottom: 60.0,
+            right: 20.0,
+            child: altreWidget(),
           ),
         ],
       ),
